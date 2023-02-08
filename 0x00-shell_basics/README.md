@@ -3,3 +3,4 @@
 script for changing directory to home
 script for Display current directory contents in a long format
 script that prints directory contents, including hidden files
+script for displaying also user and groups IDs
