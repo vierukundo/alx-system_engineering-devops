@@ -9,3 +9,4 @@ script that adds execution permission to the owner, the group owner and the othe
 script that give no permission to users and groups but all permissions to other users
 script for John Doe permissions
 script that sets the mode of the file hello the same as olleh’s mode
+ script that adds execute permission to all subdirectories of the current directory for the owner, the group owner and all other users
