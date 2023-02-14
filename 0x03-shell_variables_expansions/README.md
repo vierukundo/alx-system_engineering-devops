@@ -1,0 +1,1 @@
+Script about shell expansions
