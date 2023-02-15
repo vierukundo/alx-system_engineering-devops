@@ -1,4 +1,4 @@
 #!/bin/bash
 git add . 
-git commit -m 'Done another script'
+git commit -m 'alx shell projects'
 git push
