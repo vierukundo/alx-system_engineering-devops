@@ -4,5 +4,7 @@
 list=$(ls)
 
 for f in $list; do
-	echo "$f"
+	if [ -f "$f" ] && [[ "$f" != .* ]] && [[ "$f" == *-* ]]; then
+		echo "${f#*-}"
+	fi
 done
