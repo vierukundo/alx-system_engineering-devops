@@ -6,5 +6,7 @@ list=$(ls)
 for f in $list; do
 	if [ -f "$f" ] && [[ "$f" != .* ]] && [[ "$f" == *-* ]]; then
 		echo "${f#*-}"
+	elif [ -f "$f" ] && [[ "$f" != .* ]] && [[ "$f" != *-* ]]; then
+		echo "$f"
 	fi
 done
