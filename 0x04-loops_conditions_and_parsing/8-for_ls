@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Bash script that displays content of the current directory In a list format
+
+list=$(ls)
+
+for f in $list; do
+	echo "$f"
+done
