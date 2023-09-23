@@ -2,8 +2,9 @@
 
 file { '/etc/ssh/ssh_config':
   ensure  => 'file',
-  mode    => '0644',
+  mode    => '0600',
   owner   => 'root',
+  group   => 'root',
   content => "Host *\n\
   IdentityFile ~/.ssh/school\n\
   PasswordAuthentication no\n",
