@@ -1,25 +1,30 @@
 #!/usr/bin/env bash
 # configuring 301 redirect
+sudo apt-get update
+sudo apt-get install -y nginx
 
-# Replace "default" with the appropriate site configuration file name
-CONFIG_FILE="/etc/nginx/sites-available/redirect.conf"
-
-sudo tee "$CONFIG_FILE" > /dev/null <<EOF
-server {
+# Create a default Nginx configuration that listens on port 80
+echo "server {
     listen 80;
     listen [::]:80;
-    server_name vierukundo.tech;
 
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=bbVZo4Yw7pI;
+    root /var/www/html/;
+    index index.htm index.html index.nginx-debian.html;
+
+    location / {
+        try_files $uri $uri/ =404;
     }
-}
-EOF
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+}" | sudo tee /etc/nginx/sites-available/default
 
-# Create a symbolic link to enable the site configuration
-# Replace "default" with the appropriate site configuration file name
-sudo ln -s "$CONFIG_FILE" "/etc/nginx/sites-enabled/"
+# Restart Nginx (without using systemctl)
+sudo /etc/init.d/nginx restart
 
-# Restart Nginx with sudo
-sudo service nginx restart
-
+# Check if Nginx is running
+if pgrep nginx > /dev/null; then
+    echo "Nginx has been installed and configured successfully."
+else
+    echo "Nginx installation or configuration failed."
+fi
