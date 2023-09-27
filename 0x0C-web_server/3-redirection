@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# configuring 301 redirect
+
+# Replace "default" with the appropriate site configuration file name
+CONFIG_FILE="/etc/nginx/sites-available/redirect.conf"
+
+sudo tee "$CONFIG_FILE" > /dev/null <<EOF
+server {
+    listen 80;
+    listen [::]:80;
+    server_name vierukundo.tech;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=bbVZo4Yw7pI;
+    }
+}
+EOF
+
+# Create a symbolic link to enable the site configuration
+# Replace "default" with the appropriate site configuration file name
+sudo ln -s "$CONFIG_FILE" "/etc/nginx/sites-enabled/"
+
+# Restart Nginx with sudo
+sudo service nginx restart
+
