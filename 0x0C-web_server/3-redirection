@@ -10,7 +10,7 @@ sudo apt-get -y update
 sudo apt-get -y install nginx
 
 # Create a default Nginx index page
-echo "Hello World!" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+echo "Hello World!" > /var/www/html/index.html
 
 # Use sed to replace the server block in the Nginx configuration
 sudo sed -i -e "s|$str_to_replace|$new_string|" /etc/nginx/sites-enabled/default
