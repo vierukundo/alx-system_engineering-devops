@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Configure Nginx with custom 404 error page
+
+# Variables
+nginx_config_file="/etc/nginx/sites-available/default"
+custom_error_file="/usr/share/nginx/html/404error.html"
+custom_error_message="Ceci n'est pas une page"
+welcome_message="Hello World!"
+redirect_location="location /redirect_me {
+    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+}"
+
+# Update the package list and install Nginx
+sudo apt-get -y update
+sudo apt-get -y install nginx
+
+# Allow HTTP traffic through the firewall
+sudo ufw allow 'Nginx HTTP'
+
+# Create the custom error page and welcome page
+echo "$custom_error_message" | sudo tee "$custom_error_file" > /dev/null
+echo "$welcome_message" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+
+# Update Nginx configuration with custom error page and redirection
+sudo bash -c "cat <<EOF >> $nginx_config_file
+
+$redirect_location
+
+error_page 404 /404error.html;
+location = /404error.html {
+    root /usr/share/nginx/html;
+    internal;
+}
+EOF"
+
+# Restart Nginx to apply the configuration changes
+sudo service nginx start
