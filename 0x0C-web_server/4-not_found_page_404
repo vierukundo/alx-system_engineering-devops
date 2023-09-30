@@ -1,37 +1,29 @@
 #!/usr/bin/env bash
-# Configure Nginx with custom 404 error page
+# Configure Nginx to redirect /redirect_me and have a custom 404 page
 
-# Variables
-nginx_config_file="/etc/nginx/sites-available/default"
-custom_error_file="/usr/share/nginx/html/404error.html"
-custom_error_message="Ceci n'est pas une page"
-welcome_message="Hello World!"
-redirect_location="location /redirect_me {
-    return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-}"
+# Define variables for old and new strings
+str_to_replace_server="server_name _;"
+new_server_block="server_name _;\n\n\tlocation /redirect_me {\n\t\treturn 301 https://www.youtube.com/watch?v=bbVZo4Yw7pI;\n\t}"
+
+# New variables for custom 404 page
+str_to_find_404="# pass PHP scripts to FastCGI server"
+new_404_config="error_page 404 /404.html;\n\n\tlocation = /404.html {\n\t\tinternal;\n\t\treturn 404 \"Ceci n\'est pas une page\n\";\n\t}\n\n\t# pass PHP scri>
 
 # Update the package list and install Nginx
 sudo apt-get -y update
 sudo apt-get -y install nginx
 
-# Allow HTTP traffic through the firewall
-sudo ufw allow 'Nginx HTTP'
+# Create a default Nginx index page
+echo "Hello World!" > /var/www/html/index.html
 
-# Create the custom error page and welcome page
-echo "$custom_error_message" | sudo tee "$custom_error_file" > /dev/null
-echo "$welcome_message" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+# Use sed to replace the server block in the Nginx configuration
+sudo sed -i -e "s|$str_to_replace_server|$new_server_block|" /etc/nginx/sites-enabled/default
 
-# Update Nginx configuration with custom error page and redirection
-sudo bash -c "cat <<EOF >> $nginx_config_file
+# Use sed to add the custom 404 page configuration
+sudo sed -i "s|$str_to_find_404|$new_404_config|" /etc/nginx/sites-enabled/default
 
-$redirect_location
+# Create the custom 404 page
+echo "Ceci n\'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
 
-error_page 404 /404error.html;
-location = /404error.html {
-    root /usr/share/nginx/html;
-    internal;
-}
-EOF"
-
-# Restart Nginx to apply the configuration changes
-sudo service nginx start
+# Restart Nginx
+sudo service nginx restart
