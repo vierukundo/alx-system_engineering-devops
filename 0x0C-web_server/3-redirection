@@ -15,5 +15,5 @@ echo "Hello World!" > /var/www/html/index.html
 # Use sed to replace the server block in the Nginx configuration
 sudo sed -i -e "s|$str_to_replace|$new_string|" /etc/nginx/sites-enabled/default
 
-# Start Nginx
-sudo service nginx start
+# restart Nginx
+sudo service nginx restart
