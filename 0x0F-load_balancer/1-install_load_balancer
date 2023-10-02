@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Install and configure HAProxy on lb-01 server with frontend and backend using direct assignment
+
+# Update the package list and install HAProxy
+sudo apt-get -y update
+sudo apt-get -y install haproxy
+
+# Define the HAProxy configuration for frontend and backend using direct assignment
+haproxy_config="
+frontend http-in
+    bind *:80
+    default_backend servers
+
+backend servers
+    balance roundrobin
+    server 305862-web-01 18.234.169.191:80 check
+    server 305862-web-02 54.157.177.231:80 check
+"
+
+# Append the HAProxy configuration to the HAProxy configuration file
+echo "$haproxy_config" | sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null
+
+# Restart HAProxy
+sudo service haproxy restart
