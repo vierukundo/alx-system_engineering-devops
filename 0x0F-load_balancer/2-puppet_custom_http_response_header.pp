@@ -6,7 +6,7 @@ exec { 'apt-update':
 }
 
 package { 'nginx':
-  ensure => installed,
+  ensure  => installed,
   require => Exec['apt-update'],
 }
 
@@ -22,14 +22,14 @@ file_line { 'add_redirect':
 }
 
 # Create a custom 404 error page
-error_page { '/var/www/html/404.html':
+file { '/var/www/html/404.html':
   ensure  => file,
   content => "Ceci n'est pas une page\n",
   require => Package['nginx'],
 }
 
-# Add a custom error page configuration to Nginx
-path_to_page_error { 'custom-error-page':
+# Add a custom location block to Nginx configuration
+file_line { 'custom-error-page':
   path    => '/etc/nginx/sites-enabled/default',
   line    => "  location /xyzfoo {\n    alias /var/www/html/404.html;\n  }",
   match   => 'server_name _;',
@@ -37,10 +37,11 @@ path_to_page_error { 'custom-error-page':
   notify  => Service['nginx'],
 }
 
-# Add X-Served-By header to Nginx configuration
-server_hostname=$(hostname)
+# Get the hostname of the server
+$server_hostname = $facts['fqdn']
 
-header_line { 'add-x-served-by-header':
+# Add X-Served-By header to Nginx configuration
+file_line { 'add-x-served-by-header':
   path    => '/etc/nginx/sites-enabled/default',
   line    => "    add_header X-Served-By $server_hostname;",
   match   => 'location / {',
@@ -53,3 +54,4 @@ service { 'nginx':
   enable  => true,
   require => Package['nginx'], # Ensure Nginx package is installed before starting the service
 }
+
