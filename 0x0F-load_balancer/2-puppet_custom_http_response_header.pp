@@ -10,48 +10,23 @@ package { 'nginx':
   require => Exec['apt-update'],
 }
 
-file { '/var/www/html/index.nginx-debian.html':
-  content => 'Hello World!',
-}
-
-file_line { 'add_redirect':
-  path   => '/etc/nginx/sites-enabled/default',
-  after  => 'server_name _;',
-  line   => '    location /redirect_me {return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;}',
-  notify => Service['nginx'], # Notify Nginx service to restart when the config changes
-}
-
-# Create a custom 404 error page
-file { '/var/www/html/404.html':
-  ensure  => file,
-  content => "Ceci n'est pas une page\n",
-  require => Package['nginx'],
-}
-
-# Add a custom location block to Nginx configuration
-file_line { 'custom-error-page':
-  path    => '/etc/nginx/sites-enabled/default',
-  line    => "  location /xyzfoo {\n    alias /var/www/html/404.html;\n  }",
-  match   => 'server_name _;',
-  require => Package['nginx'],
-  notify  => Service['nginx'],
-}
-
 # Get the hostname of the server
 $server_hostname = $facts['fqdn']
 
-# Add X-Served-By header to Nginx configuration
-file_line { 'add-x-served-by-header':
-  path    => '/etc/nginx/sites-enabled/default',
-  line    => "    add_header X-Served-By $server_hostname;",
-  match   => 'location / {',
+$org_string = "location / {"
+$new_string = "location / {\n\t\tadd_header X-Served-By $server_hostname;\n"
+
+# Use 'sed' to modify Nginx configuration
+exec { 'modify-nginx-config':
+  command => "sudo sed -i 's|${org_string}|${new_string}|' /etc/nginx/sites-enabled/default",
+  path    => '/usr/bin:/bin',
   require => Package['nginx'],
   notify  => Service['nginx'],
 }
 
+# Restart Nginx
 service { 'nginx':
   ensure  => running,
   enable  => true,
-  require => Package['nginx'], # Ensure Nginx package is installed before starting the service
+  require => Exec['modify-nginx-config'],
 }
-
