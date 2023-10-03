@@ -10,23 +10,13 @@ package { 'nginx':
   require => Exec['apt-update'],
 }
 
-# Get the hostname of the server
-$server_hostname = $facts['fqdn']
-
-$org_string = "location / {"
-$new_string = "location / {\n\t\tadd_header X-Served-By $server_hostname;\n"
-
-# Use 'sed' to modify Nginx configuration
-exec { 'modify-nginx-config':
-  command => "sudo sed -i 's|${org_string}|${new_string}|' /etc/nginx/sites-enabled/default",
-  path    => '/usr/bin:/bin',
+exec { 'edit-nginx-config':
+  command => 'sudo sed -i "s|location / {|location / {\n\tadd_header X-Served-By $(hostname);|" /etc/nginx/sites-enabled/default',
+  provider => shell,
   require => Package['nginx'],
-  notify  => Service['nginx'],
 }
 
-# Restart Nginx
-service { 'nginx':
-  ensure  => running,
-  enable  => true,
-  require => Exec['modify-nginx-config'],
+exec { 'restart':
+  command => 'sudo service nginx restart',
+  provider => shell,
 }
