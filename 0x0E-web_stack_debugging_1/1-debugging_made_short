@@ -2,4 +2,4 @@
 # configures ubuntu to listen to 80 and kill process
 sed -i s/8080/80/ /etc/nginx/sites-enabled/default
 service nginx restart > /dev/null
-pkill nginx
+kill "$(pgrep nginx | head -1)"
