@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Script that will display information about subdomains
+
+# Function to query DNS and display information
+query_dns() {
+    domain="$1"
+    subdomain="$2"
+
+    # Use dig to query DNS records for the subdomain
+    dns_output=$(dig "$subdomain.$domain")
+
+    # Extract the record type and destination from the DNS output
+    record_type=$(echo "$dns_output" | awk '/ANSWER SECTION:/ {getline; print $4}')
+    destination=$(echo "$dns_output" | awk '/ANSWER SECTION:/ {getline; print $5}')
+
+    # Display the information
+    echo "The subdomain $subdomain is a $record_type record and points to $destination"
+}
+
+# Main script
+if [ $# -eq 2 ]; then
+    # When both domain and subdomain parameters are provided, display information for the specified subdomain
+    query_dns "$1" "$2"
+else
+    # When only the domain parameter is provided, display information for default subdomains
+    query_dns "$1" www
+    query_dns "$1" lb-01
+    query_dns "$1" web-01
+    query_dns "$1" web-02
+fi
