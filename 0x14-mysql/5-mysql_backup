@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Bash script that generates a MySQL dump and creates a compressed archive out of it
+
+# Get the current date in the required format (day-month-year)
+current_date=$(date +"%d-%m-%Y")
+
+# MySQL dump command to export all databases
+sudo mysqldump -u root -p"$1" --all-databases > backup.sql
+
+# Create the tar.gz archive with the specified naming format
+archive_name="${current_date}.tar.gz"
+tar -czf "$archive_name" backup.sql
