@@ -28,12 +28,12 @@ def get_employee_todo_progress(employee_id):
 
         for task in todo_list:
             task_info = {
-                    "task": task.get('title'),
-                    "completed": task.get('completed'),
-                    "username": employee_username
+                    'task': task.get('title'),
+                    'completed': task.get('completed'),
+                    'username': employee_username
                     }
             task_list.append(task_info)
-        user_associated_task["{}".format(employee_id)] = task_list
+        user_associated_task['{}'.format(employee_id)] = task_list
         serialized_data = json.dumps(user_associated_task)
         f.write(serialized_data)
 
