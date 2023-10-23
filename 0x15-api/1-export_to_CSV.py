@@ -23,7 +23,7 @@ def get_employee_todo_progress(employee_id):
     todo_list = todo_response.json()
     # export data in the CSV format
     with open("{}.csv".format(employee_id), 'w') as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f, quoting=csv.QUOTE_ALL)
         for task in todo_list:
             row = [
                     task.get('userId'), employee_username,
