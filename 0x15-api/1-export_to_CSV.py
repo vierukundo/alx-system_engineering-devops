@@ -15,7 +15,7 @@ def get_employee_todo_progress(employee_id):
     # Make a GET request to retrieve the user's information
     user_response = requests.get(f"{base_url}/users/{employee_id}")
     user_data = user_response.json()
-    employee_name = user_data.get('name')
+    employee_username = user_data.get('username')
 
     # Make a GET request to retrieve the user's TODO list with the parameters
     todo_response = requests.get(f"{base_url}/todos", params=params)
@@ -26,7 +26,7 @@ def get_employee_todo_progress(employee_id):
         writer = csv.writer(f)
         for task in todo_list:
             row = [
-                    task.get('userId'), employee_name,
+                    task.get('userId'), employee_username,
                     task.get('completed'), task.get('title')
                     ]
             writer.writerow(row)
