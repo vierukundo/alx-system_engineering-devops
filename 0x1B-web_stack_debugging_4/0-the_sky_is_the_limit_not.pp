@@ -4,6 +4,6 @@ exec {'Raise the ULIMIT':
 }
 
 exec {'restart nginx':
-  command  => '/etc/init.d/nginx restart',
+  command  => 'service nginx restart',
   provider => 'shell',
 }
