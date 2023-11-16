@@ -1,5 +1,5 @@
-exec {'Raise the ULIMIT':
-  command  => '/bin/sed -i "s/15/10000/" /etc/default/nginx',
+exec {'Raise_the_ULIMIT':
+  command  => 'sed -i "s/15/10000/" /etc/default/nginx',
   provider => 'shell',
 }
 
